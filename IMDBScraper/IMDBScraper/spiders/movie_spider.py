@@ -76,7 +76,7 @@ class test_spider(Spider):
             "test": test
         }
 
-# EX: scrapy crawl test_spider -o test_result.json
+# EX: scrapy crawl test_spider2 -o test_result2.json
 # Currently set to crawl one movie (dark knight) to see if parsing correct data
 class test_spider2(Spider):
     name = "test_spider2"

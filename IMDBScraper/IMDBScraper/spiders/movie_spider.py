@@ -75,3 +75,33 @@ class test_spider(Spider):
         yield {
             "test": test
         }
+
+# EX: scrapy crawl test_spider -o test_result.json
+# Currently set to crawl one movie (dark knight) to see if parsing correct data
+class test_spider2(Spider):
+    name = "test_spider2"
+    start_urls = ["https://www.imdb.com/title/tt%07d/?ref_=chttp_i_3" % ID for ID in range(1000)]
+    
+    def parse(self,response):
+        title = response.xpath("//span[contains(@class, 'hero__primary-text')]/text()").extract()
+        plot = response.xpath("//p[@data-testid='plot']/span[1]/text()").extract()
+        # synopsis = response.xpath("//span[contains(@class, 'hero__primary-text')]/text()").extract()
+        ratings = response.xpath("//div[@data-testid='hero-rating-bar__aggregate-rating__score']/span/text()").extract_first()
+        director = response.xpath("//*[@id='__next']/main/div/section[1]/div/section/div/div[1]/section[4]/ul/li[1]/div/ul/li/a/text()").extract()
+        writers = response.xpath("//*[@id='__next']/main/div/section[1]/div/section/div/div[1]/section[4]/ul/li[2]/div/ul//li/a/text()").extract()
+        stars = response.xpath("//div[@data-testid='title-cast-item']/div[2]/a/text()").extract()
+        # genres = response.xpath("//*[@data-testid='storyline-genres']/div/ul//li/a/text()").extract()
+        img = response.xpath("//*[@id='__next']/main/div/section[1]/section/div[3]/section/section/div[3]/div[1]/div[1]/div/a/@href").extract()
+        url = response.request.url
+        yield {
+            "url" : url,
+            "title": title, 
+            "plot" : plot,
+            # "synopsis" : synopsis,
+            "ratings" : ratings,
+            "director": director,
+            "writers": writers,
+            "stars": stars,
+            # "genres": genres,
+            "img" : img
+        }

@@ -19,10 +19,10 @@ class Product(scrapy.Item):
 # EX: scrapy crawl movie_spider -o results.json
 # starts from https://www.imdb.com/title/tt0120737/ and goes up
 class movie_spider(Spider):
-    name = "test_spider3"
+    name = "movie_spider"
     START = 120737
-    DELTA = 3000
-
+    DELTA = 57692
+    # doing 57692 first
     start_urls = ["https://www.imdb.com/title/tt%07d/?ref_=chttp_i_3" % ID for ID in range(START, START+DELTA)]
 
     def parse(self,response):
@@ -56,7 +56,7 @@ class movie_spider(Spider):
 # EX: scrapy crawl old_movie_spider -o result.json
 # first crawls start_urls for links, then goes through every link and gets movie attributes
 class old_movie_spider(Spider):
-    name = "movie_spider"
+    name = "old_movie_spider"
     start_urls = ["https://www.imdb.com/chart/top?ref_=nv_mv_250"]
     
     def parse(self,response):

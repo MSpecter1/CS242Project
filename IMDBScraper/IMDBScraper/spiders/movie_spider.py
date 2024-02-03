@@ -117,7 +117,9 @@ class test_spider2(Spider):
 # EX: scrapy crawl test_spider_tyborgg -o test_result_ty.json
 class test_spider_tyborgg(Spider):
     name = "test_spider_tyborgg"
-    start_urls = ["https://m.imdb.com/list/ls071410558/"]
+    # add the ?page=x to the url to start from the page you want to scrape
+    start_urls = ["https://m.imdb.com/list/ls502982263/"]
+    # https://m.imdb.com/list/ls502982263/?page=11
     
     def parse_summary(self, response):
         item_data = response.meta["item"]
@@ -138,6 +140,8 @@ class test_spider_tyborgg(Spider):
         yield response.follow(response.url + "plotsummary", callback=self.parse_summary, dont_filter=True, meta={"item":m})
 
     def parse(self,response):
+        self.page_counter = getattr(self, "page_counter", 1)
+
         for movie in response.css("div.media"):
             m = Product()
             m["title"]= movie.xpath("a/span/span[@class='h4']/text()").get()
@@ -145,5 +149,7 @@ class test_spider_tyborgg(Spider):
             yield response.follow("https://m.imdb.com/title/" + movie.xpath("span/@data-tconst").get(), callback=self.parse_indiv, dont_filter=True, meta={"item":m})            
 
         next_page = response.xpath("//div[contains(@class, 'list-pagination')]/a[contains(@class, 'next-page')]/@href").get()
-        if next_page is not None:
+        # set the self.page_counter < x to x number of pages you want to scrape
+        if next_page is not None and self.page_counter < 10:
+            self.page_counter += 1
             yield response.follow(next_page, callback=self.parse)

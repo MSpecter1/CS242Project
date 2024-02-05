@@ -118,7 +118,7 @@ class test_spider2(Spider):
 class test_spider_tyborgg(Spider):
     name = "test_spider_tyborgg"
     # add the ?page=x to the url to start from the page you want to scrape
-    start_urls = ["https://m.imdb.com/list/ls502982263/"]
+    start_urls = ["https://m.imdb.com/list/ls502982263/?page=11"]
     # https://m.imdb.com/list/ls502982263/?page=11
     
     def parse_summary(self, response):
@@ -150,6 +150,6 @@ class test_spider_tyborgg(Spider):
 
         next_page = response.xpath("//div[contains(@class, 'list-pagination')]/a[contains(@class, 'next-page')]/@href").get()
         # set the self.page_counter < x to x number of pages you want to scrape
-        if next_page is not None and self.page_counter < 10:
+        if next_page is not None and self.page_counter < 5:
             self.page_counter += 1
             yield response.follow(next_page, callback=self.parse)

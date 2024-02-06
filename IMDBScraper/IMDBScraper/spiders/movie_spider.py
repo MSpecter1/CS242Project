@@ -6,7 +6,7 @@ from scrapy.utils.project import get_project_settings
 from scrapy.utils.log import configure_logging
 
 class Product(scrapy.Item):
-    pos = scrapy.Field()
+    #pos = scrapy.Field()
     title = scrapy.Field()
     plot = scrapy.Field()
     ratings = scrapy.Field()
@@ -86,7 +86,7 @@ class test_spider(Spider):
     def parse(self,response):
         for movie in response.css("div.media"):
             m = Product()
-            m["pos"] = movie.xpath("a/span/span[@class='h4 unbold']/text()").get()
+            #m["pos"] = movie.xpath("a/span/span[@class='h4 unbold']/text()").get()
             m["title"]= movie.xpath("a/span/span[@class='h4']/text()").get()
             try:
                 m["genre"] = movie.xpath("a/span/span[contains(@class, 'cert-and-genres')]/p/span[@class='genre']/text()").get().replace("\n", "").strip()

@@ -38,7 +38,7 @@ sample_doc = [
             "William K.L. Dickson"
         ],
         "writer Names": [
-            null
+            "null"
         ]
     },
     {
@@ -66,7 +66,7 @@ sample_doc = [
             "Louis Lumi\u00e8re"
         ],
         "writer Names": [
-            null
+            "null"
         ]
     },
     {
@@ -94,7 +94,7 @@ sample_doc = [
             "Louis Lumi\u00e8re"
         ],
         "writer Names": [
-            null
+            "null"
         ]
     }
 ]
@@ -114,28 +114,28 @@ def create_index(dir):
     contextType.setIndexOptions(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
 
     for sample in sample_doc:
-        tconst = sample['Tconst']
-        ordering = sample['Ordering']
-        title = sample['Title']
-        region = sample['Region']
-        language = sample['Language']
-        types = sample['Types']
-        attributes = sample['Attributes']
-        isOriginalTitle = sample['Is Original Title']
-        titleType = sample['Title Type']
-        primaryTitle = sample['Primary Title']
-        originalTitle = sample['Original Title']
-        isAdult = sample['Is Adult']
-        startYear = sample['Start Year']
-        endYear = sample['End Year']
-        runtimeMinutes = sample['Runtime Minutes']
-        genres = sample['Genres']
-        directors = sample['Directors']
-        writers = sample['Writers']
-        averageRating = sample['AverageRating']
-        numVotes = sample['Num Votes']
-        directorsNames = sample['Directors Names']
-        writerNames = sample['Writer Names']
+        tconst = sample['tconst']
+        ordering = sample['ordering']
+        title = sample['title']
+        region = sample['region']
+        language = sample['language']
+        types = sample['types']
+        attributes = sample['attributes']
+        isOriginalTitle = sample['isOriginalTitle']
+        titleType = sample['titleType']
+        primaryTitle = sample['primaryTitle']
+        originalTitle = sample['originalTitle']
+        isAdult = sample['isAdult']
+        startYear = sample['startYear']
+        endYear = sample['endYear']
+        runtimeMinutes = sample['runtimeMinutes']
+        genres = sample['genres']
+        directors = sample['directors']
+        writers = sample['writers']
+        averageRating = sample['averageRating']
+        numVotes = sample['numVotes']
+        directorsNames = sample['directors Names']
+        writerNames = sample['writer Names']
 
         doc = Document()
         doc.add(Field('Tconst', str(tconst), contextType))
@@ -167,7 +167,7 @@ def retrieve(storedir, query):
     searchDir = NIOFSDirectory(Paths.get(storedir))
     searcher = IndexSearcher(DirectoryReader.open(searchDir))
     
-    parser = QueryParser('Context', StandardAnalyzer())
+    parser = QueryParser('Tconst', StandardAnalyzer())
     parsed_query = parser.parse(query)
 
     topDocs = searcher.search(parsed_query, 10).scoreDocs

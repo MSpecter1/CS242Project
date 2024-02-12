@@ -167,7 +167,7 @@ def retrieve(storedir, query):
     searchDir = NIOFSDirectory(Paths.get(storedir))
     searcher = IndexSearcher(DirectoryReader.open(searchDir))
     
-    parser = QueryParser('Tconst', StandardAnalyzer())
+    parser = QueryParser('Title', StandardAnalyzer())
     parsed_query = parser.parse(query)
 
     topDocs = searcher.search(parsed_query, 10).scoreDocs
@@ -205,4 +205,4 @@ def retrieve(storedir, query):
 
 lucene.initVM(vmargs=['-Djava.awt.headless=true'])
 create_index('sample_lucene_index/')
-retrieve('sample_lucene_index/', 'web data')
+retrieve('sample_lucene_index/', 'Blacksmith')

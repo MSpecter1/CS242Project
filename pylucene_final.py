@@ -124,4 +124,5 @@ def retrieve(storedir, query):
 lucene.initVM(vmargs=['-Djava.awt.headless=true'])
 json_data = parse_json('test.json')
 create_index(json_data ,'sample_lucene_index/')
-retrieve('sample_lucene_index/', 'Blacksmith')
+query = " ".join(sys.argv[1:])
+retrieve('sample_lucene_index/', query)

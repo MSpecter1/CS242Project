@@ -81,12 +81,12 @@ def create_index(movies, dir):
         writer.addDocument(doc)
     writer.close()
 
-def retrieve(storedir, query):
+def retrieve(storedir, field, keyword):
     searchDir = NIOFSDirectory(Paths.get(storedir))
     searcher = IndexSearcher(DirectoryReader.open(searchDir))
     
-    parser = QueryParser('Title', StandardAnalyzer())
-    parsed_query = parser.parse(query)
+    parser = QueryParser(field, StandardAnalyzer())
+    parsed_query = parser.parse(keyword)
 
     topDocs = searcher.search(parsed_query, 10).scoreDocs
     topkdocs = []
@@ -123,14 +123,19 @@ def retrieve(storedir, query):
 
 lucene.initVM(vmargs=['-Djava.awt.headless=true'])
 json_data = parse_json('test.json')
-create_index(json_data ,'sample_lucene_index/')
+create_index(json_data ,'imdb_lucene_index/')
 
 # checking to make sure a search query is provided.
 if len(sys.argv) <= 1:
-    print("Please enter a search query.")
+    print("Please enter a search query in the format 'Field:\"keyword\"'.")
     sys.exit(1)
 
-# Still need to add handlers for different types of queries.
+query_arg = sys.argv[1]
+if ":" not in query_arg:
+    print("Please enter a search query in the format 'Field:\"keyword\"'.")
+    sys.exit(1)
 
-query = " ".join(sys.argv[1:])
-retrieve('sample_lucene_index/', query)
+field, keyword = query_arg.split(":", 1)
+keyword = keyword.strip('"')
+
+retrieve('imdb_lucene_index/', field, keyword)

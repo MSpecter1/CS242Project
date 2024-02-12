@@ -74,12 +74,5 @@ json_file_path = 'test.json'
 # Read JSON data from the file
 json_data = read_json_file(json_file_path)
 
-# Directory to store the Lucene index
-index_directory = 'sample_lucene_index/'
-
-# Create Lucene index
-create_index(index_directory, json_data)
-
-# Search for documents containing the term "Blacksmith" in the title
-search_query = 'Blacksmith'
-retrieve(index_directory, search_query)
+create_index('sample_lucene_index_3/')
+retrieve('sample_lucene_index_3/', 'movies')

@@ -124,5 +124,13 @@ def retrieve(storedir, query):
 lucene.initVM(vmargs=['-Djava.awt.headless=true'])
 json_data = parse_json('test.json')
 create_index(json_data ,'sample_lucene_index/')
+
+# checking to make sure a search query is provided.
+if len(sys.argv) <= 1:
+    print("Please enter a search query.")
+    sys.exit(1)
+
+# Still need to add handlers for different types of queries.
+
 query = " ".join(sys.argv[1:])
 retrieve('sample_lucene_index/', query)

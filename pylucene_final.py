@@ -3,6 +3,7 @@ logging.disable(sys.maxsize)
 
 import lucene
 import os
+import json
 from org.apache.lucene.store import MMapDirectory, SimpleFSDirectory, NIOFSDirectory
 from java.nio.file import Paths
 from org.apache.lucene.analysis.standard import StandardAnalyzer
@@ -12,94 +13,11 @@ from org.apache.lucene.index import FieldInfo, IndexWriter, IndexWriterConfig, I
 from org.apache.lucene.search import IndexSearcher, BoostQuery, Query
 from org.apache.lucene.search.similarities import BM25Similarity
 
-sample_doc = [
-    {
-        "tconst": "tt0000005",
-        "ordering": 10,
-        "title": "Blacksmith Scene",
-        "region": "US",
-        "language": "\\N",
-        "types": "imdbDisplay",
-        "attributes": "\\N",
-        "isOriginalTitle": "0",
-        "titleType": "short",
-        "primaryTitle": "Blacksmith Scene",
-        "originalTitle": "Blacksmith Scene",
-        "isAdult": 0,
-        "startYear": "1893",
-        "endYear": "\\N",
-        "runtimeMinutes": "1",
-        "genres": "Comedy,Short",
-        "directors": "nm0005690",
-        "writers": "\\N",
-        "averageRating": 6.2,
-        "numVotes": 2722,
-        "directors Names": [
-            "William K.L. Dickson"
-        ],
-        "writer Names": [
-            "null"
-        ]
-    },
-    {
-        "tconst": "tt0000022",
-        "ordering": 1,
-        "title": "The Blacksmiths",
-        "region": "US",
-        "language": "\\N",
-        "types": "\\N",
-        "attributes": "literal English title",
-        "isOriginalTitle": "0",
-        "titleType": "short",
-        "primaryTitle": "Blacksmith Scene",
-        "originalTitle": "Les forgerons",
-        "isAdult": 0,
-        "startYear": "1895",
-        "endYear": "\\N",
-        "runtimeMinutes": "1",
-        "genres": "Documentary,Short",
-        "directors": "nm0525910",
-        "writers": "\\N",
-        "averageRating": 5.1,
-        "numVotes": 1124,
-        "directors Names": [
-            "Louis Lumi\u00e8re"
-        ],
-        "writer Names": [
-            "null"
-        ]
-    },
-    {
-        "tconst": "tt0000029",
-        "ordering": 10,
-        "title": "Repas de b\u00e9b\u00e9",
-        "region": "FR",
-        "language": "\\N",
-        "types": "imdbDisplay",
-        "attributes": "\\N",
-        "isOriginalTitle": "0",
-        "titleType": "short",
-        "primaryTitle": "Baby's Meal",
-        "originalTitle": "Repas de b\u00e9b\u00e9",
-        "isAdult": 0,
-        "startYear": "1895",
-        "endYear": "\\N",
-        "runtimeMinutes": "1",
-        "genres": "Documentary,Short",
-        "directors": "nm0525910",
-        "writers": "\\N",
-        "averageRating": 5.9,
-        "numVotes": 3466,
-        "directors Names": [
-            "Louis Lumi\u00e8re"
-        ],
-        "writer Names": [
-            "null"
-        ]
-    }
-]
+def parse_json(filepath):
+    with open(filepath, 'r') as file:
+        return json.load(file)
 
-def create_index(dir):
+def create_index(movies, dir):
     if not os.path.exists(dir):
         os.mkdir(dir)
     store = SimpleFSDirectory(Paths.get(dir))
@@ -113,29 +31,29 @@ def create_index(dir):
     contextType.setTokenized(True)
     contextType.setIndexOptions(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
 
-    for sample in sample_doc:
-        tconst = sample['tconst']
-        ordering = sample['ordering']
-        title = sample['title']
-        region = sample['region']
-        language = sample['language']
-        types = sample['types']
-        attributes = sample['attributes']
-        isOriginalTitle = sample['isOriginalTitle']
-        titleType = sample['titleType']
-        primaryTitle = sample['primaryTitle']
-        originalTitle = sample['originalTitle']
-        isAdult = sample['isAdult']
-        startYear = sample['startYear']
-        endYear = sample['endYear']
-        runtimeMinutes = sample['runtimeMinutes']
-        genres = sample['genres']
-        directors = sample['directors']
-        writers = sample['writers']
-        averageRating = sample['averageRating']
-        numVotes = sample['numVotes']
-        directorsNames = sample['directors Names']
-        writerNames = sample['writer Names']
+    for movie in movies:
+        tconst = movie['tconst']
+        ordering = movie['ordering']
+        title = movie['title']
+        region = movie['region']
+        language = movie['language']
+        types = movie['types']
+        attributes = movie['attributes']
+        isOriginalTitle = movie['isOriginalTitle']
+        titleType = movie['titleType']
+        primaryTitle = movie['primaryTitle']
+        originalTitle = movie['originalTitle']
+        isAdult = movie['isAdult']
+        startYear = movie['startYear']
+        endYear = movie['endYear']
+        runtimeMinutes = movie['runtimeMinutes']
+        genres = movie['genres']
+        directors = movie['directors']
+        writers = movie['writers']
+        averageRating = movie['averageRating']
+        numVotes = movie['numVotes']
+        directorsNames = movie['directors Names']
+        writerNames = movie['writer Names']
 
         doc = Document()
         doc.add(Field('Tconst', str(tconst), contextType))
@@ -204,5 +122,6 @@ def retrieve(storedir, query):
 
 
 lucene.initVM(vmargs=['-Djava.awt.headless=true'])
-create_index('sample_lucene_index/')
+json_data = parse_json('test.json')
+create_index(json_data ,'sample_lucene_index/')
 retrieve('sample_lucene_index/', 'Blacksmith')

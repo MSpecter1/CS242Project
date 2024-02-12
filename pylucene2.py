@@ -1,17 +1,18 @@
 import logging, sys
+logging.disable(sys.maxsize)
+
 import lucene
 import os
-import json
-from org.apache.lucene.store import SimpleFSDirectory
+from org.apache.lucene.store import MMapDirectory, SimpleFSDirectory, NIOFSDirectory
 from java.nio.file import Paths
 from org.apache.lucene.analysis.standard import StandardAnalyzer
-from org.apache.lucene.document import Document, StringField, TextField, FieldType
-from org.apache.lucene.index import IndexWriter, IndexWriterConfig, IndexOptions, DirectoryReader
+from org.apache.lucene.document import Document, Field, FieldType
 from org.apache.lucene.queryparser.classic import QueryParser
-from org.apache.lucene.search import IndexSearcher
+from org.apache.lucene.index import FieldInfo, IndexWriter, IndexWriterConfig, IndexOptions, DirectoryReader
+from org.apache.lucene.search import IndexSearcher, BoostQuery, Query
+from org.apache.lucene.search.similarities import BM25Similarity
 
-# JSON data
-json_data = [
+sample_doc = [
     {
         "tconst": "tt0000005",
         "ordering": 10,
@@ -33,8 +34,12 @@ json_data = [
         "writers": "\\N",
         "averageRating": 6.2,
         "numVotes": 2722,
-        "directorsNames": ["William K.L. Dickson"],
-        "writerNames": [None]
+        "directors Names": [
+            "William K.L. Dickson"
+        ],
+        "writer Names": [
+            null
+        ]
     },
     {
         "tconst": "tt0000022",
@@ -57,13 +62,17 @@ json_data = [
         "writers": "\\N",
         "averageRating": 5.1,
         "numVotes": 1124,
-        "directorsNames": ["Louis Lumière"],
-        "writerNames": [None]
+        "directors Names": [
+            "Louis Lumi\u00e8re"
+        ],
+        "writer Names": [
+            null
+        ]
     },
     {
         "tconst": "tt0000029",
         "ordering": 10,
-        "title": "Repas de bébé",
+        "title": "Repas de b\u00e9b\u00e9",
         "region": "FR",
         "language": "\\N",
         "types": "imdbDisplay",
@@ -71,7 +80,7 @@ json_data = [
         "isOriginalTitle": "0",
         "titleType": "short",
         "primaryTitle": "Baby's Meal",
-        "originalTitle": "Repas de bébé",
+        "originalTitle": "Repas de b\u00e9b\u00e9",
         "isAdult": 0,
         "startYear": "1895",
         "endYear": "\\N",
@@ -81,8 +90,12 @@ json_data = [
         "writers": "\\N",
         "averageRating": 5.9,
         "numVotes": 3466,
-        "directorsNames": ["Louis Lumière"],
-        "writerNames": [None]
+        "directors Names": [
+            "Louis Lumi\u00e8re"
+        ],
+        "writer Names": [
+            null
+        ]
     }
 ]
 
@@ -95,32 +108,66 @@ def create_index(dir):
     config.setOpenMode(IndexWriterConfig.OpenMode.CREATE)
     writer = IndexWriter(store, config)
 
-    # Define field types
-    title_type = FieldType()
-    title_type.setStored(True)
-    title_type.setTokenized(True)
-    title_type.setIndexOptions(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
+    contextType = FieldType()
+    contextType.setStored(True)
+    contextType.setTokenized(True)
+    contextType.setIndexOptions(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
 
-    genres_type = FieldType()
-    genres_type.setStored(True)
-    genres_type.setTokenized(True)
-    genres_type.setIndexOptions(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
+    for sample in sample_doc:
+        tconst = sample['Tconst']
+        ordering = sample['Ordering']
+        title = sample['Title']
+        region = sample['Region']
+        language = sample['Language']
+        types = sample['Types']
+        attributes = sample['Attributes']
+        isOriginalTitle = sample['Is Original Title']
+        titleType = sample['Title Type']
+        primaryTitle = sample['Primary Title']
+        originalTitle = sample['Original Title']
+        isAdult = sample['Is Adult']
+        startYear = sample['Start Year']
+        endYear = sample['End Year']
+        runtimeMinutes = sample['Runtime Minutes']
+        genres = sample['Genres']
+        directors = sample['Directors']
+        writers = sample['Writers']
+        averageRating = sample['AverageRating']
+        numVotes = sample['Num Votes']
+        directorsNames = sample['Directors Names']
+        writerNames = sample['Writer Names']
 
-    # Index each JSON document
-    for item in json_data:
         doc = Document()
-        doc.add(StringField('tconst', item['tconst'], Field.Store.YES))
-        doc.add(TextField('title', item['title'], title_type))
-        doc.add(TextField('genres', item['genres'], genres_type))
+        doc.add(Field('Tconst', str(tconst), contextType))
+        doc.add(Field('Ordering', str(ordering), contextType))
+        doc.add(Field('Title', str(title), contextType))
+        doc.add(Field('Region', str(region), contextType))
+        doc.add(Field('Language', str(language), contextType))
+        doc.add(Field('Types', str(types), contextType))
+        doc.add(Field('Attributes', str(attributes), contextType))
+        doc.add(Field('Is Original Title', str(isOriginalTitle), contextType))
+        doc.add(Field('Title Type', str(titleType), contextType))
+        doc.add(Field('Primary Title', str(primaryTitle), contextType))
+        doc.add(Field('Original Title', str(originalTitle), contextType))
+        doc.add(Field('Is Adult', str(isAdult), contextType))
+        doc.add(Field('Start Year', str(startYear), contextType))
+        doc.add(Field('End Year', str(endYear), contextType))
+        doc.add(Field('Runtime Minutes', str(runtimeMinutes), contextType))
+        doc.add(Field('Genres', str(genres), contextType))
+        doc.add(Field('Directors', str(directors), contextType))
+        doc.add(Field('Writers', str(writers), contextType))
+        doc.add(Field('Average Rating', str(averageRating), contextType))
+        doc.add(Field('Num Votes', str(numVotes), contextType))
+        doc.add(Field('Directors Names', str(directorsNames), contextType))
+        doc.add(Field('Writer Names', str(writerNames), contextType))
         writer.addDocument(doc)
-
     writer.close()
 
 def retrieve(storedir, query):
-    searchDir = SimpleFSDirectory(Paths.get(storedir))
+    searchDir = NIOFSDirectory(Paths.get(storedir))
     searcher = IndexSearcher(DirectoryReader.open(searchDir))
-
-    parser = QueryParser('title', StandardAnalyzer())
+    
+    parser = QueryParser('Context', StandardAnalyzer())
     parsed_query = parser.parse(query)
 
     topDocs = searcher.search(parsed_query, 10).scoreDocs
@@ -129,14 +176,33 @@ def retrieve(storedir, query):
         doc = searcher.doc(hit.doc)
         topkdocs.append({
             "score": hit.score,
-            "tconst": doc.get("tconst"),
-            "title": doc.get("title"),
-            "genres": doc.get("genres")
+            "Tconst": doc.get("Tconst"),
+            "Ordering": doc.get("Ordering"),
+            "Title": doc.get("Title"),
+            "Region": doc.get("Region"),
+            "Language": doc.get("Language"),
+            "Types": doc.get("Types"),
+            "Attributes": doc.get("Attributes"),
+            "Is Original Title": doc.get("Is Original Title"),
+            "Title Type": doc.get("Title Type"),
+            "Primary Title": doc.get("Primary Title"),
+            "Original Title": doc.get("Original Title"),
+            "Is Adult": doc.get("Is Adult"),
+            "Start Year": doc.get("Start Year"),
+            "End Year": doc.get("End Year"),
+            "Runtime Minutes": doc.get("Runtime Minutes"),
+            "Genres": doc.get("Genres"),
+            "Directors": doc.get("Directors"),
+            "Writers": doc.get("Writers"),
+            "Average Rating": doc.get("Average Rating"),
+            "Num Votes": doc.get("Num Votes"),
+            "Directors Names": doc.get("Directors Names"),
+            "Writer Names": doc.get("Writer Names")
         })
-
+    
     print(topkdocs)
 
 
 lucene.initVM(vmargs=['-Djava.awt.headless=true'])
-create_index('sample_lucene_index_2/')
-retrieve('sample_lucene_index_2/', 'movies')
+create_index('sample_lucene_index/')
+retrieve('sample_lucene_index/', 'web data')

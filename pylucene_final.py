@@ -13,6 +13,11 @@ from org.apache.lucene.index import FieldInfo, IndexWriter, IndexWriterConfig, I
 from org.apache.lucene.search import IndexSearcher, BoostQuery, Query
 from org.apache.lucene.search.similarities import BM25Similarity
 
+# To run: python3 pylucene_final.py Field:"keyword"
+# EX: python3 pylucene_final.py Title:"the"
+# the "Field" in the query only work for fields with 1 word for now
+# TO-DO: add handlers for different types of queries and to work with all fields
+
 def parse_json(filepath):
     with open(filepath, 'r') as file:
         return json.load(file)
@@ -125,16 +130,18 @@ lucene.initVM(vmargs=['-Djava.awt.headless=true'])
 json_data = parse_json('test.json')
 create_index(json_data ,'imdb_lucene_index/')
 
-# checking to make sure a search query is provided.
+# Checking to make sure a search query is provided.
 if len(sys.argv) <= 1:
     print("Please enter a search query in the format 'Field:\"keyword\"'.")
     sys.exit(1)
 
 query_arg = sys.argv[1]
+# Checking for the right format of the query
 if ":" not in query_arg:
     print("Please enter a search query in the format 'Field:\"keyword\"'.")
     sys.exit(1)
 
+# Extracting field and keyword from the query
 field, keyword = query_arg.split(":", 1)
 keyword = keyword.strip('"')
 

@@ -4,7 +4,6 @@ logging.disable(sys.maxsize)
 import lucene
 import os
 import json
-import time
 from org.apache.lucene.store import MMapDirectory, SimpleFSDirectory, NIOFSDirectory
 from java.nio.file import Paths
 from org.apache.lucene.analysis.standard import StandardAnalyzer
@@ -18,8 +17,12 @@ def retrieve(storedir, field, keyword):
     searchDir = NIOFSDirectory(Paths.get(storedir))
     searcher = IndexSearcher(DirectoryReader.open(searchDir))
     
-    parser = QueryParser(field, StandardAnalyzer())
-    parsed_query = parser.parse(keyword)
+    if field == "start_year":
+        start, end = keyword.split(" TO ")
+        parsed_query = TermRangeQuery(field, BytesRef(start.encode('utf-8')), BytesRef(end.encode('utf-8')), True, True)
+    else:
+        parser = QueryParser(field, StandardAnalyzer())
+        parsed_query = parser.parse(keyword)
 
     topDocs = searcher.search(parsed_query, 10).scoreDocs
     topkdocs = []
@@ -49,12 +52,20 @@ if len(sys.argv) <= 1:
 query_arg = ' '.join(sys.argv[1:])
 # Checking for the right format of the query
 if ":" not in query_arg:
-    print("Please enter a search query in the format 'Field:\"keyword\"'.")
+    print("Please enter a search query in the format 'Field:\"search keyword(s)\"'.")
     sys.exit(1)
-
-# Extracting field and keyword from the query
-field, keyword = query_arg.split(":", 1)
-keyword = keyword.strip('"')
-print(keyword)
+    
+if "start_year" in query_arg:
+    if " TO " in query_arg:
+        field, keyword = query_arg.split(":", 1)
+        keyword = keyword.strip('[')
+        keyword = keyword.strip(']')
+    else:
+        field, keyword = query_arg.split(":", 1)
+        keyword = keyword.strip('"')    
+else:
+    # Extracting field and keyword from the query
+    field, keyword = query_arg.split(":", 1)
+    keyword = keyword.strip('"')
 
 retrieve('imdb_lucene_index/', field, keyword)

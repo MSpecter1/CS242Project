@@ -51,11 +51,20 @@ def retrieve(storedir, field, search_val, boost_val):
             "directors_names": doc.get("directors_names"),
             "writer_names": doc.get("writer_names")
         })
-        print(topkdocs[-1])
     
     # print(topkdocs)
-
-
+    
+    for record in topkdocs:
+        print("Score: ", record["score"])
+        print("Title: ", record["title"])
+        print("Synopsis: ", record["synopsis"])
+        print("Region: ", record["region"])
+        print("Start Year: ", record["start_year"])
+        print("Genres: ", record["genres"])
+        print("Directors Names: ", record["directors_names"])
+        print("Writer Names: ", record["writer_names"])
+        print("\n")
+    
 lucene.initVM(vmargs=['-Djava.awt.headless=true'])
 
 # Checking to make sure a search query is provided.

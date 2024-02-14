@@ -24,10 +24,10 @@ def retrieve(storedir, field, search_val, boost_val):
     if field == "start_year" and " TO " in search_val: # range search
         start, end = search_val.split(" TO ")
         parsed_query = TermRangeQuery(field, BytesRef(start.encode('utf-8')), BytesRef(end.encode('utf-8')), True, True)
-    elif "*" in search_val: # wildcard search
-        parser = QueryParser(field, StandardAnalyzer())
-        parser.setAllowLeadingWildcard(True)
-        parsed_query = parser.parse(search_val)
+    # elif "*" in search_val: # wildcard search
+    #     parser = QueryParser(field, StandardAnalyzer())
+    #     parser.setAllowLeadingWildcard(True)
+    #     parsed_query = parser.parse(search_val)
     else: # basic text search
         parser = QueryParser(field, StandardAnalyzer())
         parsed_query = parser.parse(search_val)

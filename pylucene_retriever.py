@@ -89,4 +89,3 @@ else: # text search
     search_val = search_val.strip('"')
 
 retrieve('imdb_lucene_index/', field, search_val, boost_val)
-# test

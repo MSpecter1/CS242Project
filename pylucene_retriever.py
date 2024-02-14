@@ -51,8 +51,9 @@ def retrieve(storedir, field, search_val, boost_val):
             "directors_names": doc.get("directors_names"),
             "writer_names": doc.get("writer_names")
         })
+        print(topkdocs[-1])
     
-    print(topkdocs)
+    # print(topkdocs)
 
 
 lucene.initVM(vmargs=['-Djava.awt.headless=true'])

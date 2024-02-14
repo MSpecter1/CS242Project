@@ -12,6 +12,8 @@ from org.apache.lucene.queryparser.classic import QueryParser
 from org.apache.lucene.index import FieldInfo, IndexWriter, IndexWriterConfig, IndexOptions, DirectoryReader
 from org.apache.lucene.search import IndexSearcher, BoostQuery, Query
 from org.apache.lucene.search.similarities import BM25Similarity
+from org.apache.lucene.search import TermRangeQuery
+from org.apache.lucene.util import BytesRef
 
 def retrieve(storedir, field, keyword):
     searchDir = NIOFSDirectory(Paths.get(storedir))

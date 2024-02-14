@@ -17,7 +17,7 @@ def retrieve(storedir, field, keyword):
     searchDir = NIOFSDirectory(Paths.get(storedir))
     searcher = IndexSearcher(DirectoryReader.open(searchDir))
     
-    if field == "start_year":
+    if field == "start_year" and " TO " in keyword:
         start, end = keyword.split(" TO ")
         parsed_query = TermRangeQuery(field, BytesRef(start.encode('utf-8')), BytesRef(end.encode('utf-8')), True, True)
     else:
@@ -54,7 +54,7 @@ query_arg = ' '.join(sys.argv[1:])
 if ":" not in query_arg:
     print("Please enter a search query in the format 'Field:\"search keyword(s)\"'.")
     sys.exit(1)
-    
+
 if "start_year" in query_arg:
     if " TO " in query_arg:
         field, keyword = query_arg.split(":", 1)

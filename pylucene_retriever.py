@@ -26,7 +26,7 @@ def retrieve(storedir, field, search_value):
     elif "*" in search_value: # wildcard search
         parser = QueryParser(field, StandardAnalyzer())
         parsed_query = parser.parse(search_value)
-        wildcard_query = WildcardQuery(parsed_query.getTerm(field))
+        wildcard_query = WildcardQuery(Field(field), BytesRef(search_value.encode('utf-8')))
     else: # basic text search
         parser = QueryParser(field, StandardAnalyzer())
         parsed_query = parser.parse(search_value)

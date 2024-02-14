@@ -35,7 +35,7 @@ class movie_spider(Spider):
 
     def __init__(self, start=None, delta=None, *args, **kwargs):
         super(movie_spider, self).__init__(*args, **kwargs)
-        COUNT = 1 # CHANGE THIS TO INCREMENT START POSITION
+        COUNT = 7 # CHANGE THIS TO INCREMENT START POSITION
         DELTA = int(delta)
         START = int(start)+DELTA*COUNT
         self.start_urls = ["https://www.imdb.com/title/tt%07d/?ref_=chttp_i_3" % ID for ID in range(START, START+DELTA)]

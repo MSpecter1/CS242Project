@@ -8,9 +8,9 @@ fi
 
 input_data_file=$1
 
-if [ ! -e "$input_data_file" ]
+if [ ! -f "$input_data_file" ]
 then
-    echo "Input data file does not exist: $input_data_file"
+    echo "File path is wrong or input data file does not exist: $input_data_file"
     exit 1
 fi
 

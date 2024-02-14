@@ -46,7 +46,7 @@ if len(sys.argv) <= 1:
     print("Please enter a search query in the format 'Field:\"keyword\"'.")
     sys.exit(1)
 
-query_arg = sys.argv[1]
+query_arg = ' '.join(sys.argv[1:])
 # Checking for the right format of the query
 if ":" not in query_arg:
     print("Please enter a search query in the format 'Field:\"keyword\"'.")

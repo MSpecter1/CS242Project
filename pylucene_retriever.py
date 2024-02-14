@@ -61,9 +61,22 @@ def retrieve(storedir, field, search_val, boost_val):
         print("Region: ", record["region"])
         print("Start Year: ", record["start_year"])
         print("Genres: ", record["genres"])
-        print("Directors Names: ", record["directors_names"])
-        print("Writer Names: ", record["writer_names"])
+        # print("Directors Names: ", record["directors_names"])
+        print("Directors Names: ", end="")
+        if record["directors_names"]:
+            for i in range(len(record["directors_names"])):
+                print(record["directors_names"][i], end="")
+                if i != len(test) - 1:
+                    print(", ", end="")
+        # print("Writer Names: ", record["writer_names"])
         print("\n")
+        print("Writer Names: ", end="")       
+        if record["directors_names"]:
+            for i in range(len(record["directors_names"])):
+                print(record["directors_names"][i], end="")
+                if i != len(test) - 1:
+                    print(", ", end="")
+        print("\n\n")
     
 lucene.initVM(vmargs=['-Djava.awt.headless=true'])
 

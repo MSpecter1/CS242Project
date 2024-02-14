@@ -66,15 +66,15 @@ def retrieve(storedir, field, search_val, boost_val):
         if record["directors_names"]:
             for i in range(len(record["directors_names"])):
                 print(record["directors_names"][i], end="")
-                if i != len(test) - 1:
+                if i != len(record["directors_names"]) - 1:
                     print(", ", end="")
         # print("Writer Names: ", record["writer_names"])
         print("\n")
         print("Writer Names: ", end="")       
-        if record["directors_names"]:
-            for i in range(len(record["directors_names"])):
-                print(record["directors_names"][i], end="")
-                if i != len(test) - 1:
+        if record["writer_names"]:
+            for i in range(len(record["writer_names"])):
+                print(record["writer_names"][i], end="")
+                if i != len(record["writer_names"]) - 1:
                     print(", ", end="")
         print("\n\n")
     

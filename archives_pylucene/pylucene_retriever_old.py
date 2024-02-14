@@ -27,11 +27,27 @@ def retrieve(storedir, field, keyword):
         doc = searcher.doc(hit.doc)
         topkdocs.append({
             "score": hit.score,
+            # "Tconst": doc.get("Tconst"),
+            # "Ordering": doc.get("Ordering"),
             "title": doc.get("title"),
             "synopsis": doc.get("synopsis"),
             "region": doc.get("region"),
+            # "Language": doc.get("Language"),
+            # "Types": doc.get("Types"),
+            # "Attributes": doc.get("Attributes"),
+            # "Is Original Title": doc.get("Is Original Title"),
+            # "Title Type": doc.get("Title Type"),
+            # "Primary Title": doc.get("Primary Title"),
+            # "Original Title": doc.get("Original Title"),
+            # "Is Adult": doc.get("Is Adult"),
             "start_year": doc.get("start_year"),
+            # "End Year": doc.get("End Year"),
+            # "Runtime Minutes": doc.get("Runtime Minutes"),
             "genres": doc.get("genres"),
+            # "Directors": doc.get("Directors"),
+            # "Writers": doc.get("Writers"),
+            # "Average Rating": doc.get("Average Rating"),
+            # "Num Votes": doc.get("Num Votes"),
             "directors_names": doc.get("directors_names"),
             "writer_names": doc.get("writer_names")
         })
@@ -55,6 +71,5 @@ if ":" not in query_arg:
 # Extracting field and keyword from the query
 field, keyword = query_arg.split(":", 1)
 keyword = keyword.strip('"')
-print(keyword)
 
 retrieve('imdb_lucene_index/', field, keyword)

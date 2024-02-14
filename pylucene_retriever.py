@@ -24,17 +24,17 @@ def retrieve(storedir, field, search_value):
         start, end = search_value.split(" TO ")
         parsed_query = TermRangeQuery(field, BytesRef(start.encode('utf-8')), BytesRef(end.encode('utf-8')), True, True)
     elif "*" in search_value: # wildcard search
-        wildcard_query = WildcardQuery()
-        wildcard_query.setRewriteMethod(WildcardQuery.SCORING_BOOLEAN_REWRITE)
-        wildcard_query.setQuery(field + ":" + search_value)
+        parser = QueryParser(field, StandardAnalyzer())
+        parser.setAllowLeadingWildcard(True)
+        parsed_query = parser.parse(search_value)
     else: # basic text search
         parser = QueryParser(field, StandardAnalyzer())
         parsed_query = parser.parse(search_value)
 
-    if "*" in search_value:
-        topDocs = searcher.search(wildcard_query, 10).scoreDocs
-    else:
-        topDocs = searcher.search(parsed_query, 10).scoreDocs
+    # if "*" in search_value:
+    #     topDocs = searcher.search(wildcard_query, 10).scoreDocs
+    # else:
+    topDocs = searcher.search(parsed_query, 10).scoreDocs
 
     topkdocs = []
     for hit in topDocs:

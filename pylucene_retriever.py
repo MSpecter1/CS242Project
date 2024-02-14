@@ -24,9 +24,9 @@ def retrieve(storedir, field, search_value):
         start, end = search_value.split(" TO ")
         parsed_query = TermRangeQuery(field, BytesRef(start.encode('utf-8')), BytesRef(end.encode('utf-8')), True, True)
     elif "*" in search_value: # wildcard search
-        parser = QueryParser(field, StandardAnalyzer())
-        parsed_query = parser.parse(search_value)
-        wildcard_query = WildcardQuery(Field(field), BytesRef(search_value.encode('utf-8')))
+        wildcard_query = WildcardQuery()
+        wildcard_query.setRewriteMethod(WildcardQuery.SCORING_BOOLEAN_REWRITE)
+        wildcard_query.setQuery(field + ":" + search_value)
     else: # basic text search
         parser = QueryParser(field, StandardAnalyzer())
         parsed_query = parser.parse(search_value)

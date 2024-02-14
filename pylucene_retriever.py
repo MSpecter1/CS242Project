@@ -14,26 +14,28 @@ from org.apache.lucene.search import IndexSearcher, BoostQuery, Query
 from org.apache.lucene.search.similarities import BM25Similarity
 from org.apache.lucene.search import TermRangeQuery
 from org.apache.lucene.search import WildcardQuery
+from org.apache.lucene.search import BoostQuery
 from org.apache.lucene.util import BytesRef
 
-def retrieve(storedir, field, search_value):
+def retrieve(storedir, field, search_val, boost_val):
     searchDir = NIOFSDirectory(Paths.get(storedir))
     searcher = IndexSearcher(DirectoryReader.open(searchDir))
     
-    if field == "start_year" and " TO " in search_value: # range search
-        start, end = search_value.split(" TO ")
+    if field == "start_year" and " TO " in search_val: # range search
+        start, end = search_val.split(" TO ")
         parsed_query = TermRangeQuery(field, BytesRef(start.encode('utf-8')), BytesRef(end.encode('utf-8')), True, True)
-    elif "*" in search_value: # wildcard search
+    elif "*" in search_val: # wildcard search
         parser = QueryParser(field, StandardAnalyzer())
         parser.setAllowLeadingWildcard(True)
-        parsed_query = parser.parse(search_value)
+        parsed_query = parser.parse(search_val)
     else: # basic text search
         parser = QueryParser(field, StandardAnalyzer())
-        parsed_query = parser.parse(search_value)
+        parsed_query = parser.parse(search_val)
 
-    # if "*" in search_value:
-    #     topDocs = searcher.search(wildcard_query, 10).scoreDocs
-    # else:
+    if boost_val: # field/term boosting
+        boost_query = BoostQuery(parsed_query, boost_val)
+        parsed_query = boost_query
+
     topDocs = searcher.search(parsed_query, 10).scoreDocs
 
     topkdocs = []
@@ -58,7 +60,7 @@ lucene.initVM(vmargs=['-Djava.awt.headless=true'])
 # Checking to make sure a search query is provided.
 if len(sys.argv) <= 1:
     print("Please enter a search query.")
-    print("For a basic text search, enter a search query with the format 'Field:\"search_value\"'.")
+    print("For a basic text search, enter a search query with the format 'Field:\"search_val\"'.")
     print("For a range search on start_year, enter a search query with the format 'start_year:[YYYY TO YYYY]'.")
     print("For a wildcard search, enter a search query with the format 'Field:*value*'.")
     sys.exit(1)
@@ -66,17 +68,22 @@ if len(sys.argv) <= 1:
 query_arg = ' '.join(sys.argv[1:])
 # Checking for the right format of the query
 if ":" not in query_arg:
-    print("For a basic text search, enter a search query with the format 'Field:\"search_value\"'.")
+    print("For a basic text search, enter a search query with the format 'Field:\"search_val\"'.")
     print("For a range search on start_year, enter a search query with the format 'start_year:[YYYY TO YYYY]'.")
     print("For a wildcard search, enter a search query with the format 'Field:*value*'.")
     sys.exit(1)
 
-if "start_year" in query_arg and " TO " in query_arg: # range search
-    field, search_value = query_arg.split(":", 1)
-    search_value = search_value.strip('[')
-    search_value = search_value.strip(']')
-else: # text search
-    field, search_value = query_arg.split(":", 1)
-    search_value = search_value.strip('"')
+boost_val = None
+if "^" in query_arg: # field/term boosting
+    query_arg, boost_str = query_arg.rsplit("^", 1)
+    boost_val = float(boost_str)
 
-retrieve('imdb_lucene_index/', field, search_value)
+if "start_year" in query_arg and " TO " in query_arg: # range search
+    field, search_val = query_arg.split(":", 1)
+    search_val = search_val.strip('[')
+    search_val = search_val.strip(']')
+else: # text search
+    field, search_val = query_arg.split(":", 1)
+    search_val = search_val.strip('"')
+
+retrieve('imdb_lucene_index/', field, search_val, boost_val)

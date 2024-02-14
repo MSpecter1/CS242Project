@@ -18,10 +18,6 @@ from org.apache.lucene.search.similarities import BM25Similarity
 # EX: python3 pylucene_final.py Title:"the"
 # TO-DO: add handlers for different types of queries and to work with all fields
 
-def parse_json(filepath):
-    with open(filepath, 'r') as file:
-        return json.load(file)
-
 def create_index(movies, dir):
     if not os.path.exists(dir):
         os.mkdir(dir)
@@ -88,49 +84,12 @@ def create_index(movies, dir):
         writer.addDocument(doc)
     writer.close()
 
-def retrieve(storedir, field, keyword):
-    searchDir = NIOFSDirectory(Paths.get(storedir))
-    searcher = IndexSearcher(DirectoryReader.open(searchDir))
-    
-    parser = QueryParser(field, StandardAnalyzer())
-    parsed_query = parser.parse(keyword)
-
-    topDocs = searcher.search(parsed_query, 10).scoreDocs
-    topkdocs = []
-    for hit in topDocs:
-        doc = searcher.doc(hit.doc)
-        topkdocs.append({
-            "score": hit.score,
-            # "Tconst": doc.get("Tconst"),
-            # "Ordering": doc.get("Ordering"),
-            "title": doc.get("title"),
-            "synopsis": doc.get("synopsis"),
-            "region": doc.get("region"),
-            # "Language": doc.get("Language"),
-            # "Types": doc.get("Types"),
-            # "Attributes": doc.get("Attributes"),
-            # "Is Original Title": doc.get("Is Original Title"),
-            # "Title Type": doc.get("Title Type"),
-            # "Primary Title": doc.get("Primary Title"),
-            # "Original Title": doc.get("Original Title"),
-            # "Is Adult": doc.get("Is Adult"),
-            "start_year": doc.get("start_year"),
-            # "End Year": doc.get("End Year"),
-            # "Runtime Minutes": doc.get("Runtime Minutes"),
-            "genres": doc.get("genres"),
-            # "Directors": doc.get("Directors"),
-            # "Writers": doc.get("Writers"),
-            # "Average Rating": doc.get("Average Rating"),
-            # "Num Votes": doc.get("Num Votes"),
-            "directors_names": doc.get("directors_names"),
-            "writer_names": doc.get("writer_names")
-        })
-    
-    print(topkdocs)
-
-
 lucene.initVM(vmargs=['-Djava.awt.headless=true'])
-json_data = parse_json('test.json')
+
+# Parse in the json data file
+filepath = sys.argv[1]
+with open(filepath, 'r') as file:
+    json_data = json.load(file)
 
 # Index the data
 index_startTime = time.time()
@@ -138,24 +97,3 @@ create_index(json_data ,'imdb_lucene_index/')
 index_endTime = time.time()
 index_runTime = index_endTime - index_startTime
 print(f"Indexing Run Time: {round(index_runTime, 3)} seconds")
-
-# Checking to make sure a search query is provided.
-if len(sys.argv) <= 1:
-    print("Please enter a search query in the format 'Field:\"keyword\"'.")
-    sys.exit(1)
-
-query_arg = sys.argv[1]
-# Checking for the right format of the query
-if ":" not in query_arg:
-    print("Please enter a search query in the format 'Field:\"keyword\"'.")
-    sys.exit(1)
-
-# Extracting field and keyword from the query
-field, keyword = query_arg.split(":", 1)
-keyword = keyword.strip('"')
-
-search_startTime = time.time()
-retrieve('imdb_lucene_index/', field, keyword)
-search_endTime = time.time()
-search_runTime = index_endTime - index_startTime
-print(f"Search Run Time: {round(search_runTime, 3)} seconds")

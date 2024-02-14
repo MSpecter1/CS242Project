@@ -24,10 +24,10 @@ def retrieve(storedir, field, search_val, boost_val):
     if field == "start_year" and " TO " in search_val: # range search
         start, end = search_val.split(" TO ")
         parsed_query = TermRangeQuery(field, BytesRef(start.encode('utf-8')), BytesRef(end.encode('utf-8')), True, True)
-    # elif "*" in search_val: # wildcard search
-    #     parser = QueryParser(field, StandardAnalyzer())
-    #     parser.setAllowLeadingWildcard(True)
-    #     parsed_query = parser.parse(search_val)
+    elif "*" in search_val: # wildcard search
+        parser = QueryParser(field, StandardAnalyzer())
+        parser.setAllowLeadingWildcard(True)
+        parsed_query = parser.parse(search_val)
     else: # basic text search
         parser = QueryParser(field, StandardAnalyzer())
         parsed_query = parser.parse(search_val)
@@ -61,22 +61,9 @@ def retrieve(storedir, field, search_val, boost_val):
         print("Region: ", record["region"])
         print("Start Year: ", record["start_year"])
         print("Genres: ", record["genres"])
-        # print("Directors Names: ", record["directors_names"])
-        print("Directors Names: ", end="")
-        if record["directors_names"]:
-            for i in range(len(record["directors_names"])):
-                print(record["directors_names"][i], end="")
-                if i != len(record["directors_names"]) - 1:
-                    print(", ", end="")
-        # print("Writer Names: ", record["writer_names"])
+        print("Directors Names: ", record["directors_names"])
+        print("Writer Names: ", record["writer_names"])
         print("\n")
-        print("Writer Names: ", end="")       
-        if record["writer_names"]:
-            for i in range(len(record["writer_names"])):
-                print(record["writer_names"][i], end="")
-                if i != len(record["writer_names"]) - 1:
-                    print(", ", end="")
-        print("\n\n")
     
 lucene.initVM(vmargs=['-Djava.awt.headless=true'])
 

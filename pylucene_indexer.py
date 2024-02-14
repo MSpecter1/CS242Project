@@ -14,10 +14,6 @@ from org.apache.lucene.index import FieldInfo, IndexWriter, IndexWriterConfig, I
 from org.apache.lucene.search import IndexSearcher, BoostQuery, Query
 from org.apache.lucene.search.similarities import BM25Similarity
 
-# To run: python3 pylucene_final.py Field:"keyword"
-# EX: python3 pylucene_final.py Title:"the"
-# TO-DO: add handlers for different types of queries and to work with all fields
-
 def create_index(movies, dir):
     if not os.path.exists(dir):
         os.mkdir(dir)

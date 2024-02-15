@@ -7,4 +7,5 @@ To execute the ID iterator spider, cd to the IMDBScraper folder, then run: ‘sc
 # Instruction on how to build the PyLucene index.
 To build the PyLucene index, we created an executable file called indexbuilder.sh to run the command, while also checking whether the file path is correct and the input file exists.
 we run the executable file indexbuilder.sh with the following command: ./indexbuilder.sh <filepath/input_data_file>  
-If ran successfully, the indexed data will be created in a folder called “imdb_lucene_index” in the same directory as the indexbuilder.sh file, and we can perform search queries on that data
+If ran successfully, the indexed data will be created in a folder called “imdb_lucene_index” in the same directory as the indexbuilder.sh file, and we can perform search queries on that data.  
+Note that the json file we are using as input is the "cleaned" json which relies on the IMDB public dataset. Make sure to use the given input file rather than just using the direct output of the scraper.

@@ -36,7 +36,7 @@ def retrieve(storedir, field, search_val, boost_val):
         boost_query = BoostQuery(parsed_query, boost_val)
         parsed_query = boost_query
 
-    topDocs = searcher.search(parsed_query, 10).scoreDocs
+    topDocs = searcher.search(parsed_query, 5).scoreDocs
 
     topkdocs = []
     for hit in topDocs:

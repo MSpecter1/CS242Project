@@ -5,7 +5,7 @@ import numpy as np
 from bert_index import *
 from pylucene_search import *
 
-list_data_obj = json.load(open("../CS242 Final Combined IMDB Dataset (nulls replaced).json"))
+list_data_obj = json.load(open("../imdb_final_dataset_without_null.json"))
 search_index = search_bert_index()
 search_index.read_index("multi_full_index_no_mask.index")
 

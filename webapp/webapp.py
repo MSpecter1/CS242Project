@@ -6,7 +6,7 @@ from bert_index import *
 
 list_data_obj = json.load(open("../CS242 Final Combined IMDB Dataset (nulls replaced).json"))
 search_index = search_bert_index()
-search_index.read_index("full_index.index")
+search_index.read_index("multi_full_index_no_mask.index")
 
 class test_obj:
     def __init__(self, x, y):
@@ -48,4 +48,4 @@ demo = gr.Interface(
 )
 
 if __name__ == "__main__":
-    demo.launch()
+    demo.launch(server_port=8080)

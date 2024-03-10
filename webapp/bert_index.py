@@ -8,8 +8,8 @@ import pandas as pd
 os.environ['KMP_DUPLICATE_LIB_OK']='True'
 
 class search_bert_index():
-    tokenizer = AutoTokenizer.from_pretrained("distilbert/distilbert-base-uncased")
-    model = AutoModel.from_pretrained("distilbert/distilbert-base-uncased")
+    tokenizer = AutoTokenizer.from_pretrained("google-bert/bert-base-multilingual-uncased")
+    model = AutoModel.from_pretrained("google-bert/bert-base-multilingual-uncased")
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     model.to(device)
     index = faiss.IndexFlatIP(768)

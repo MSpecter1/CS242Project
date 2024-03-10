@@ -45,7 +45,7 @@ class BERT_indexer():
         start_time = time.time()
         list_cnt = 0
         for movie in tqdm(self.movie_json):
-            if list_cnt==5000: break
+            if list_cnt==142566: break
             # get string
             title = movie["title"]
             # genres = movie["genres"]
@@ -107,6 +107,7 @@ class BERT_indexer():
 
         self.index_time = time.time() - start_time
         print("Execution Time: %s seconds" % self.index_time)
+        return self.index_time
 
     def write_string_list(self, output):
         with open(output, "w", encoding="utf-8") as f:
@@ -150,24 +151,22 @@ class search_bert_index():
     def read_index(self, index_to_read):
         self.index = faiss.read_index(index_to_read)
 
-# CREATE INDEX: time = 3:20:11
-
 # indexer = BERT_indexer()
 # indexer.read_json('CS242 Final Combined IMDB Dataset (nulls replaced).json')
 # indexer.index_json_batch()
 # indexer.write_index('sentence_index_no_mask.index')
 
-search_index = search_bert_index()
-search_index.read_index("multi_full_index_no_mask.index")
-query_string = 'blacksmith scene'
-results = search_index.search(query_string)
-print("\nRESULTS RETRIEVED: ")
-f = open('CS242 Final Combined IMDB Dataset (nulls replaced).json')
-data = json.load(f)
-for result in results[0]:
-    print(data[result]['title'])
-    # print('\t'+str(data[result]['directors Names']))
-print("Done")
+# search_index = search_bert_index()
+# search_index.read_index("multi_full_index_no_mask.index")
+# query_string = 'blacksmith scene'
+# results = search_index.search(query_string)
+# print("\nRESULTS RETRIEVED: ")
+# f = open('CS242 Final Combined IMDB Dataset (nulls replaced).json')
+# data = json.load(f)
+# for result in results[0]:
+#     print(data[result]['title'])
+#     # print('\t'+str(data[result]['directors Names']))
+# print("Done")
 
 # # SEARCH INDEX
 # search_index = search_bert_index()
@@ -182,3 +181,23 @@ print("Done")
 # for result in results[0]:
 #     print(data[result]['title'])
 #     print('\t'+str(data[result]['directors Names']))
+
+# Test indexing time
+# dir = 'CS242 Datasets IMDB'
+# for f in os.listdir(dir):
+#     indexer = BERT_indexer()
+#     indexer.read_json(os.path.join(dir, f))
+#     index_time = indexer.index_json_batch()
+#     index_name = f+'_index_'+str(round(index_time, 2))
+#     indexer.write_index(os.path.join('Test_Indexes', index_name))
+
+# 0: 142566 42:32
+# 1: 285132 1:15:40
+# 2: 427698 1:57:28
+# 3: 570264 2:31:10
+# 4: 712830 3:15:12
+# 5: 855396 3:50:42
+# 6: 997962 4:26:45
+# 7: 1140528 5:19:11
+# 8: 1140528 6:05:41
+# 9: 1425660 6:56:02

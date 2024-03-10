@@ -16,11 +16,11 @@ class BERT_indexer():
     # tokenizer = AutoTokenizer.from_pretrained("google-bert/bert-base-uncased")
     # model = AutoModel.from_pretrained("google-bert/bert-base-uncased")
 
-    tokenizer = AutoTokenizer.from_pretrained("distilbert/distilbert-base-uncased")
-    model = AutoModel.from_pretrained("distilbert/distilbert-base-uncased")
+    # tokenizer = AutoTokenizer.from_pretrained("distilbert/distilbert-base-uncased")
+    # model = AutoModel.from_pretrained("distilbert/distilbert-base-uncased")
 
-    # tokenizer = AutoTokenizer.from_pretrained("google-bert/bert-base-multilingual-uncased")
-    # model = AutoModel.from_pretrained("google-bert/bert-base-multilingual-uncased")
+    tokenizer = AutoTokenizer.from_pretrained("google-bert/bert-base-multilingual-uncased")
+    model = AutoModel.from_pretrained("google-bert/bert-base-multilingual-uncased")
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     model.to(device)
@@ -45,7 +45,7 @@ class BERT_indexer():
         start_time = time.time()
         list_cnt = 0
         for movie in tqdm(self.movie_json):
-            if list_cnt==2000: break
+            if list_cnt==5000: break
             # get string
             title = movie["title"]
             # genres = movie["genres"]
@@ -80,6 +80,8 @@ class BERT_indexer():
 
             input = f"{title} {genres} {directors} {writers} {summary}"
             input = str(input)
+            # input = str(title)
+            # input = f"the movie title is {title}. The genres of this movie are: {genres}. This movie is directed by {directors}. The writers of this movie are {writers}. The plot synopsis is: {summary}"
             self.string_list.append(input)
             list_cnt+=1
         # self.write_string_list('batch-strings.txt')
@@ -96,8 +98,8 @@ class BERT_indexer():
 
             with torch.no_grad():
                 embedding = self.model(**token).last_hidden_state
-            mask = token['attention_mask'].unsqueeze(-1).expand(embedding.size()).float()
-            embedding = (embedding*mask)
+            # mask = token['attention_mask'].unsqueeze(-1).expand(embedding.size()).float()
+            # embedding = (embedding*mask)
             embedding = embedding.mean(1).cpu().numpy()
             # print(embedding.shape)
             faiss.normalize_L2(embedding)
@@ -120,10 +122,10 @@ class BERT_indexer():
 class search_bert_index():
     # tokenizer = AutoTokenizer.from_pretrained("google-bert/bert-base-uncased")
     # model = AutoModel.from_pretrained("google-bert/bert-base-uncased")
-    tokenizer = AutoTokenizer.from_pretrained("distilbert/distilbert-base-uncased")
-    model = AutoModel.from_pretrained("distilbert/distilbert-base-uncased")
-    # tokenizer = AutoTokenizer.from_pretrained("google-bert/bert-base-multilingual-uncased")
-    # model = AutoModel.from_pretrained("google-bert/bert-base-multilingual-uncased")
+    # tokenizer = AutoTokenizer.from_pretrained("distilbert/distilbert-base-uncased")
+    # model = AutoModel.from_pretrained("distilbert/distilbert-base-uncased")
+    tokenizer = AutoTokenizer.from_pretrained("google-bert/bert-base-multilingual-uncased")
+    model = AutoModel.from_pretrained("google-bert/bert-base-multilingual-uncased")
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     model.to(device)
     index = faiss.IndexFlatIP(768)
@@ -134,8 +136,8 @@ class search_bert_index():
             token[k] = v.to(self.device)
         with torch.no_grad():
             embedding = self.model(**token).last_hidden_state
-        mask = token['attention_mask'].unsqueeze(-1).expand(embedding.size()).float()
-        embedding = (embedding*mask)
+        # mask = token['attention_mask'].unsqueeze(-1).expand(embedding.size()).float()
+        # embedding = (embedding*mask)
         embedding = embedding.mean(1).cpu().numpy()
         faiss.normalize_L2(embedding)
         similarity, similar_doc = self.index.search(embedding, k=10)
@@ -153,11 +155,26 @@ class search_bert_index():
 # indexer = BERT_indexer()
 # indexer.read_json('CS242 Final Combined IMDB Dataset (nulls replaced).json')
 # indexer.index_json_batch()
-# indexer.write_index('multi_index.index')
+# indexer.write_index('sentence_index_no_mask.index')
 
+search_index = search_bert_index()
+search_index.read_index("multi_full_index_no_mask.index")
+query_string = 'blacksmith scene'
+results = search_index.search(query_string)
+print("\nRESULTS RETRIEVED: ")
+f = open('CS242 Final Combined IMDB Dataset (nulls replaced).json')
+data = json.load(f)
+for result in results[0]:
+    print(data[result]['title'])
+    # print('\t'+str(data[result]['directors Names']))
+print("Done")
+
+# # SEARCH INDEX
 # search_index = search_bert_index()
-# search_index.read_index("multi_index.index")
-# query_string = 'blacksmith scene'
+# search_index.read_index("full_index.index")
+
+# # query_string = input("enter a query: ")
+# query_string = 'blacksmith scene william k.l. dickson'
 # results = search_index.search(query_string)
 # print("\nRESULTS RETRIEVED: ")
 # f = open('CS242 Final Combined IMDB Dataset (nulls replaced).json')
@@ -165,17 +182,3 @@ class search_bert_index():
 # for result in results[0]:
 #     print(data[result]['title'])
 #     print('\t'+str(data[result]['directors Names']))
-
-# SEARCH INDEX
-search_index = search_bert_index()
-search_index.read_index("full_index.index")
-
-# query_string = input("enter a query: ")
-query_string = 'blacksmith scene william k.l. dickson'
-results = search_index.search(query_string)
-print("\nRESULTS RETRIEVED: ")
-f = open('CS242 Final Combined IMDB Dataset (nulls replaced).json')
-data = json.load(f)
-for result in results[0]:
-    print(data[result]['title'])
-    print('\t'+str(data[result]['directors Names']))

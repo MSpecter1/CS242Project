@@ -46,7 +46,7 @@ def method_call(radio_button, num_results, inp):
         #         "writer_names": ["Mario Puzo", "Francis Ford Coppola"]
         #     }
         # ]
-
+        
         lucene.initVM(vmargs=['-Djava.awt.headless=true'])
         movie_pylucene_results = pylucene_search_index.retrieve(pylucene_index, inp, num_results=num_results)
 

@@ -19,7 +19,7 @@ from org.apache.lucene.util import BytesRef
 
 class search_pylucene_index():
 
-    def retrieve(storedir, search_text, num_results):
+    def retrieve(self, storedir, search_text, num_results):
         
         boost_val = None
         if "^" in search_text: # field/term boosting

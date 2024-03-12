@@ -113,4 +113,4 @@ with gr.Blocks() as demo:
     radio_button.change(fn=change_instructions, inputs=radio_button, outputs=instructions)
     
 if __name__ == "__main__":
-    demo.launch(server_port=8080)
+    demo.launch(server_port=8080, server_name="0.0.0.0")

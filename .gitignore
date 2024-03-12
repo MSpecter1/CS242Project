@@ -2,3 +2,5 @@
 CS242 Final Combined IMDB Dataset (nulls replaced).json
 *.index
 batch-strings.txt
+*.json
+*.pyc

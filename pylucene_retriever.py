@@ -43,6 +43,7 @@ def retrieve(storedir, field, search_val, boost_val):
         doc = searcher.doc(hit.doc)
         topkdocs.append({
             "score": hit.score,
+            "tconst": doc.get("tconst"),
             "title": doc.get("title"),
             "synopsis": doc.get("synopsis"),
             "region": doc.get("region"),
@@ -56,6 +57,7 @@ def retrieve(storedir, field, search_val, boost_val):
     
     for record in topkdocs:
         print("Score: ", record["score"])
+        print("tconst: ", record["tconst"])
         print("Title: ", record["title"])
         print("Synopsis: ", record["synopsis"])
         print("Region: ", record["region"])

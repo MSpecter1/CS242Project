@@ -9,7 +9,7 @@ list_data_obj = json.load(open("../imdb_final_dataset_without_null.json"))
 search_index = search_bert_index()
 search_index.read_index("multi_full_index_no_mask.index")
 
-lucene.initVM(vmargs=['-Djava.awt.headless=true'])
+# lucene.initVM(vmargs=['-Djava.awt.headless=true'])
 pylucene_search_index = search_pylucene_index()
 pylucene_index = "imdb_lucene_index/"
 

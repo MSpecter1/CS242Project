@@ -68,39 +68,4 @@ class search_pylucene_index():
                 "writer_names": doc.get("writer_names")
             })
         
-        # print(topkdocs)
-        
-        # for record in topkdocs:
-        #     print("Score: ", record["score"])
-        #     print("Title: ", record["title"])
-        #     print("Synopsis: ", record["synopsis"])
-        #     print("Region: ", record["region"])
-        #     print("Start Year: ", record["start_year"])
-        #     print("Genres: ", record["genres"])
-        #     print("Directors Names: ", record["directors_names"])
-        #     print("Writer Names: ", record["writer_names"])
-        #     print("\n")
-        
         return topkdocs
-    
-    # lucene.initVM(vmargs=['-Djava.awt.headless=true'])
-
-# # Checking to make sure a search query is provided.
-# if len(sys.argv) <= 1:
-#     print("Please enter a search query.")
-#     print("For a basic text search, enter a search query with the format 'field:\"search_val\"'.")
-#     print("For a range search on start_year, enter a search query with the format 'start_year:[YYYY TO YYYY]'.")
-#     print("For a wildcard search, enter a search query with the format 'field:*value*'.")
-#     print("For field/term boosting, add ^X.X after the search value.")
-#     sys.exit(1)
-
-# query_arg = ' '.join(sys.argv[1:])
-# # Checking for the right format of the query
-# if ":" not in query_arg:
-#     print("For a basic text search, enter a search query with the format 'field:\"search_val\"'.")
-#     print("For a range search on start_year, enter a search query with the format 'start_year:[YYYY TO YYYY]'.")
-#     print("For a wildcard search, enter a search query with the format 'field:*value*'.")
-#     print("For field/term boosting, add ^X.X after the search value.")
-#     sys.exit(1)
-
-# retrieve('imdb_lucene_index/', field, search_val, boost_val, 5)

@@ -12,7 +12,8 @@ search_index.read_index("multi_full_index_no_mask.index")
 # lucene.initVM(vmargs=['-Djava.awt.headless=true'])
 pylucene_search_index = search_pylucene_index()
 pylucene_index = "imdb_lucene_index/"
-lucene.initVM(vmargs=['-Djava.awt.headless=true'])
+# lucene.initVM(vmargs=['-Djava.awt.headless=true'])
+initVM_bool = False
 
 class test_obj:
     def __init__(self, x, y):
@@ -49,7 +50,10 @@ def method_call(radio_button, num_results, inp):
         #     }
         # ]
         
-        # lucene.initVM(vmargs=['-Djava.awt.headless=true'])
+        if not initVM_bool:
+            lucene.initVM(vmargs=['-Djava.awt.headless=true'])
+            initVM_bool = True
+            
         movie_pylucene_results = pylucene_search_index.retrieve(pylucene_index, inp, num_results=num_results)
         for i in range(len(movie_pylucene_results)):
             t_const_id = movie_pylucene_results[i]["tconst"]

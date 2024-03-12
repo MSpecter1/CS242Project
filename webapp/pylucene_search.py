@@ -17,8 +17,6 @@ from org.apache.lucene.search import WildcardQuery
 from org.apache.lucene.search import BoostQuery
 from org.apache.lucene.util import BytesRef
 
-lucene.initVM(vmargs=['-Djava.awt.headless=true'])
-
 class search_pylucene_index():
 
     def retrieve(self, storedir, search_text, num_results):

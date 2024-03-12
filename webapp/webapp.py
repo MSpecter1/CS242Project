@@ -47,6 +47,7 @@ def method_call(radio_button, num_results, inp):
         #     }
         # ]
 
+        lucene.initVM(vmargs=['-Djava.awt.headless=true'])
         movie_pylucene_results = pylucene_search_index.retrieve(inp, num_results=num_results)
 
 

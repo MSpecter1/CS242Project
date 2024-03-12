@@ -82,7 +82,7 @@ class search_pylucene_index():
         
         return topkdocs
     
-    lucene.initVM(vmargs=['-Djava.awt.headless=true'])
+    # lucene.initVM(vmargs=['-Djava.awt.headless=true'])
 
 # # Checking to make sure a search query is provided.
 # if len(sys.argv) <= 1:

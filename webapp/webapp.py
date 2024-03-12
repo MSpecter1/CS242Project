@@ -49,6 +49,9 @@ def method_call(radio_button, num_results, inp):
         
         lucene.initVM(vmargs=['-Djava.awt.headless=true'])
         movie_pylucene_results = pylucene_search_index.retrieve(pylucene_index, inp, num_results=num_results)
+        for i in range(len(movie_pylucene_results)):
+            t_const_id = movie_pylucene_results[i]["tconst"]
+            movie_pylucene_results[i]["URL"] = f"https://www.imdb.com/title/{t_const_id}"
 
         # return pd.DataFrame([t.__dict__ for t in place_holder_obj])
         return pd.DataFrame(movie_pylucene_results)

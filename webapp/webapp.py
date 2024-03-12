@@ -9,6 +9,7 @@ list_data_obj = json.load(open("../imdb_final_dataset_without_null.json"))
 search_index = search_bert_index()
 search_index.read_index("multi_full_index_no_mask.index")
 
+lucene.initVM(vmargs=['-Djava.awt.headless=true'])
 pylucene_search_index = search_pylucene_index()
 pylucene_index = "imdb_lucene_index/"
 
@@ -47,7 +48,6 @@ def method_call(radio_button, num_results, inp):
         #     }
         # ]
         
-        lucene.initVM(vmargs=['-Djava.awt.headless=true'])
         movie_pylucene_results = pylucene_search_index.retrieve(pylucene_index, inp, num_results=num_results)
         for i in range(len(movie_pylucene_results)):
             t_const_id = movie_pylucene_results[i]["tconst"]

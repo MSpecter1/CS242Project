@@ -58,6 +58,7 @@ class search_pylucene_index():
             doc = searcher.doc(hit.doc)
             topkdocs.append({
                 "score": hit.score,
+                "tconst": doc.get("tconst"),
                 "title": doc.get("title"),
                 "synopsis": doc.get("synopsis"),
                 "region": doc.get("region"),

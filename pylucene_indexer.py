@@ -29,6 +29,7 @@ def create_index(movies, dir):
     contextType.setIndexOptions(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
 
     for movie in movies:
+        tconst = movie['tconst']
         title = movie['title']
         synopsis = movie['synopsis']
         region = movie['region']
@@ -38,6 +39,7 @@ def create_index(movies, dir):
         writerNames = movie['writer Names']
 
         doc = Document()
+        doc.add(Field('tconst', str(tconst), contextType))
         doc.add(Field('title', str(title), contextType))
         doc.add(Field('synopsis', str(synopsis), contextType))
         doc.add(Field('region', str(region), contextType))

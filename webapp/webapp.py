@@ -48,8 +48,7 @@ def method_call(radio_button, num_results, inp):
         # ]
 
         lucene.initVM(vmargs=['-Djava.awt.headless=true'])
-        movie_pylucene_results = pylucene_search_index.retrieve(inp, num_results=num_results)
-
+        movie_pylucene_results = pylucene_search_index.retrieve(pylucene_index, inp, num_results=num_results)
 
         # return pd.DataFrame([t.__dict__ for t in place_holder_obj])
         return pd.DataFrame(movie_pylucene_results)

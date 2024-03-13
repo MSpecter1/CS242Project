@@ -20,8 +20,8 @@ class search_bert_index():
             token[k] = v.to(self.device)
         with torch.no_grad():
             embedding = self.model(**token).last_hidden_state
-        mask = token['attention_mask'].unsqueeze(-1).expand(embedding.size()).float()
-        embedding = (embedding*mask)
+        # mask = token['attention_mask'].unsqueeze(-1).expand(embedding.size()).float()
+        # embedding = (embedding*mask)
         embedding = embedding.mean(1).cpu().numpy()
         faiss.normalize_L2(embedding)
         similarity, similar_doc = self.index.search(embedding, k=num_results)

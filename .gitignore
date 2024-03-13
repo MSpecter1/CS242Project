@@ -12,3 +12,6 @@ CS242 Datasets IMDB/comb_6.json
 CS242 Datasets IMDB/comb_7.json
 CS242 Datasets IMDB/comb_8.json
 CS242 Datasets IMDB/comb_9.json
+*.json
+*.pyc
+

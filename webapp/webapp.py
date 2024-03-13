@@ -35,8 +35,8 @@ def method_call(radio_button, num_results, inp):
             t_const_id = movie_pylucene_results[i]["tconst"]
             movie_pylucene_results[i]["URL"] = f"https://www.imdb.com/title/{t_const_id}"
 
-        # return pd.DataFrame([t.__dict__ for t in place_holder_obj])
         return pd.DataFrame(movie_pylucene_results)
+        # return pd.DataFrame([t.__dict__ for t in place_holder_obj])
 
     elif radio_button == "Bert":
         # place_holder_obj = [
@@ -46,14 +46,18 @@ def method_call(radio_button, num_results, inp):
         # ]
         movie_indexes = search_index.search(inp, num_results=num_results)
         movie_bert_results = []
-        for index in movie_indexes[0]:
+        for index,similarity in zip(movie_indexes[0], movie_indexes["similarity"]):
             movie_bert_results.append(list_data_obj[index])
+            movie_bert_results[-1]["Score"] = similarity
         for i in range(len(movie_bert_results)):
             t_const_id = movie_bert_results[i]["tconst"]
             movie_bert_results[i]["URL"] = f"https://www.imdb.com/title/{t_const_id}"
+        final_df = pd.DataFrame(movie_bert_results)
+        insert_front_col = final_df.pop("Score")
+        final_df.insert(0, "Score", insert_front_col)
+        return final_df
             
         # return pd.DataFrame([t.__dict__ for t in place_holder_obj])
-        return pd.DataFrame(movie_bert_results)
 
     return pd.DataFrame([{
         "Error": "Make Sure to Select A search Method"

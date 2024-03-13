@@ -45,7 +45,7 @@ class BERT_indexer():
         start_time = time.time()
         list_cnt = 0
         for movie in tqdm(self.movie_json):
-            if list_cnt==142566: break
+            # if list_cnt==2000: break
             # get string
             title = movie["title"]
             # genres = movie["genres"]
@@ -95,7 +95,7 @@ class BERT_indexer():
             # put data on GPU
             for k,v in token.items():
                 token[k] = v.to(self.device)
-
+            self.model.warn_if_padding_and_no_attention_mask(token['input_ids'], token['attention_mask'])
             with torch.no_grad():
                 embedding = self.model(**token).last_hidden_state
             # mask = token['attention_mask'].unsqueeze(-1).expand(embedding.size()).float()
@@ -169,18 +169,19 @@ class search_bert_index():
 # print("Done")
 
 # # SEARCH INDEX
-# search_index = search_bert_index()
-# search_index.read_index("full_index.index")
+search_index = search_bert_index()
+search_index.read_index("multi_full_index_no_mask.index")
 
-# # query_string = input("enter a query: ")
-# query_string = 'blacksmith scene william k.l. dickson'
-# results = search_index.search(query_string)
-# print("\nRESULTS RETRIEVED: ")
-# f = open('CS242 Final Combined IMDB Dataset (nulls replaced).json')
-# data = json.load(f)
-# for result in results[0]:
-#     print(data[result]['title'])
-#     print('\t'+str(data[result]['directors Names']))
+query_string = input("Enter a search query: ")
+# query_string = 'blacksmith scene'
+print("SEARCHING FOR: "+query_string)
+results = search_index.search(query_string)
+print("\nRESULTS RETRIEVED: ")
+f = open('CS242 Final Combined IMDB Dataset (nulls replaced).json')
+data = json.load(f)
+for result in results[0]:
+    print('\t'+data[result]['title'])
+    # print(data[result])
 
 # Test indexing time
 # dir = 'CS242 Datasets IMDB'
@@ -201,3 +202,4 @@ class search_bert_index():
 # 7: 1140528 5:19:11
 # 8: 1140528 6:05:41
 # 9: 1425660 6:56:02
+        
